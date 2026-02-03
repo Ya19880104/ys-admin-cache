@@ -1,0 +1,410 @@
+/**
+ * YS Admin Cache 設定頁面樣式
+ * 莫蘭迪淡藍灰配色 (Morandi Blue-Grey)
+ *
+ * @package YS_Admin_Cache
+ */
+
+/* 莫蘭迪淡藍灰色彩變數 */
+:root {
+    --ys-primary: #8fa8b8;            /* 莫蘭迪淡藍灰 */
+    --ys-primary-hover: #7a95a6;      /* 深一點 */
+    --ys-primary-light: #e8eff5;      /* 淺藍灰背景 */
+    --ys-primary-lighter: #f5f8fa;    /* 更淺 */
+    --ys-border: #c5d1d8;             /* 邊框色 */
+    --ys-text: #333;                  /* 主要文字 */
+    --ys-text-muted: #6b8a9a;         /* 次要文字 */
+    --ys-text-light: #7a8b95;         /* 輔助文字 */
+    --ys-success: #5a9a6b;            /* 成功綠（莫蘭迪綠） */
+    --ys-success-light: #e8f2eb;
+    --ys-error: #b85c5c;              /* 錯誤紅（莫蘭迪紅） */
+    --ys-error-light: #f5ebeb;
+    --ys-shadow: rgba(143, 168, 184, 0.15);
+}
+
+/* 設定頁面容器 */
+.ys-admin-cache-settings {
+    max-width: 800px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.ys-admin-cache-settings h1 {
+    color: var(--ys-text);
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.ys-admin-cache-settings h2 {
+    color: var(--ys-text);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--ys-primary);
+}
+
+/* 表單區塊卡片 */
+.ys-admin-cache-settings form {
+    background: #fff;
+    border: 1px solid var(--ys-border);
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 8px var(--ys-shadow);
+}
+
+.ys-admin-cache-settings .form-table th {
+    color: var(--ys-text);
+    font-weight: 600;
+    padding: 20px 10px 20px 0;
+}
+
+.ys-admin-cache-settings .form-table td {
+    padding: 15px 10px;
+}
+
+.ys-admin-cache-settings .form-table tr {
+    border-bottom: 1px solid var(--ys-border);
+}
+
+.ys-admin-cache-settings .form-table tr:last-child {
+    border-bottom: none;
+}
+
+/* 頁面選擇區塊 */
+.ys-pages-fieldset {
+    background: linear-gradient(135deg, var(--ys-primary-light) 0%, var(--ys-primary-lighter) 100%);
+    border: 1px solid var(--ys-border);
+    border-radius: 8px;
+    padding: 20px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.ys-pages-fieldset::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ys-pages-fieldset::-webkit-scrollbar-track {
+    background: var(--ys-primary-lighter);
+    border-radius: 3px;
+}
+
+.ys-pages-fieldset::-webkit-scrollbar-thumb {
+    background: var(--ys-border);
+    border-radius: 3px;
+}
+
+.ys-pages-fieldset::-webkit-scrollbar-thumb:hover {
+    background: var(--ys-primary);
+}
+
+.ys-pages-fieldset .ys-select-all {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--ys-text);
+}
+
+.ys-pages-fieldset .ys-select-all strong {
+    color: var(--ys-primary-hover);
+}
+
+.ys-pages-fieldset hr {
+    border: 0;
+    border-top: 1px dashed var(--ys-border);
+    margin: 15px 0;
+}
+
+.ys-pages-fieldset .ys-page-checkbox {
+    display: block;
+    margin: 0;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.ys-pages-fieldset .ys-page-checkbox:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: var(--ys-primary);
+}
+
+.ys-pages-fieldset .ys-page-checkbox:last-child {
+    margin-bottom: 0;
+}
+
+.ys-pages-fieldset code {
+    font-size: 11px;
+    color: var(--ys-text-muted);
+    background: var(--ys-primary-lighter);
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 8px;
+}
+
+/* Checkbox 樣式 - 莫蘭迪淺藍 */
+.ys-admin-cache-settings input[type="checkbox"] {
+    border-color: var(--ys-border);
+    border-radius: 3px;
+    width: 18px;
+    height: 18px;
+}
+
+.ys-admin-cache-settings input[type="checkbox"]:checked {
+    background-color: var(--ys-primary);
+    border-color: var(--ys-primary);
+}
+
+.ys-admin-cache-settings input[type="checkbox"]:focus {
+    border-color: var(--ys-primary);
+    box-shadow: 0 0 0 2px var(--ys-primary-light);
+}
+
+/* 數字輸入框 */
+.ys-admin-cache-settings input[type="number"] {
+    border-color: var(--ys-border);
+    border-radius: 4px;
+    padding: 6px 10px;
+}
+
+.ys-admin-cache-settings input[type="number"]:focus {
+    border-color: var(--ys-primary);
+    box-shadow: 0 0 0 2px var(--ys-primary-light);
+}
+
+/* 時間預設按鈕 */
+.ys-duration-preset {
+    color: var(--ys-primary-hover) !important;
+    text-decoration: none !important;
+    padding: 2px 8px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.ys-duration-preset:hover {
+    background: var(--ys-primary-light);
+    color: var(--ys-text) !important;
+}
+
+/* 說明文字 */
+.ys-admin-cache-settings .description {
+    color: var(--ys-text-muted);
+    font-style: normal;
+    margin-top: 8px;
+}
+
+/* 按鈕樣式 */
+.ys-admin-cache-settings .button-primary {
+    background: var(--ys-primary) !important;
+    border-color: var(--ys-primary-hover) !important;
+    color: #fff !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    border-radius: 4px;
+    padding: 6px 16px;
+    height: auto;
+    transition: all 0.2s ease;
+}
+
+.ys-admin-cache-settings .button-primary:hover {
+    background: var(--ys-primary-hover) !important;
+    border-color: var(--ys-primary-hover) !important;
+}
+
+.ys-admin-cache-settings .button-secondary {
+    background: var(--ys-primary-lighter) !important;
+    border-color: var(--ys-border) !important;
+    color: var(--ys-text) !important;
+    border-radius: 4px;
+    padding: 6px 16px;
+    height: auto;
+    transition: all 0.2s ease;
+}
+
+.ys-admin-cache-settings .button-secondary:hover {
+    background: var(--ys-primary-light) !important;
+    border-color: var(--ys-primary) !important;
+}
+
+/* 狀態訊息 */
+.ys-status-message {
+    display: inline-block;
+    margin-left: 12px;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.ys-status-message.success {
+    background: var(--ys-success-light);
+    color: var(--ys-success);
+    border: 1px solid var(--ys-success);
+}
+
+.ys-status-message.error {
+    background: var(--ys-error-light);
+    color: var(--ys-error);
+    border: 1px solid var(--ys-error);
+}
+
+.ys-status-message.loading {
+    background: var(--ys-primary-light);
+    color: var(--ys-text-muted);
+    border: 1px solid var(--ys-border);
+}
+
+/* 快取標籤（顯示在快取頁面上） */
+.ys-admin-cache-label {
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+    background: var(--ys-primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 4px;
+    z-index: 99999;
+    opacity: 0.9;
+    pointer-events: none;
+    box-shadow: 0 2px 8px var(--ys-shadow);
+}
+
+/* 統計區塊 */
+.ys-cache-stats-card {
+    background: linear-gradient(135deg, var(--ys-primary-light) 0%, var(--ys-primary-lighter) 100%);
+    border: 1px solid var(--ys-border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.ys-cache-stats-card .ys-stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.ys-cache-stats-card .ys-stats-header h3 {
+    margin: 0;
+    color: var(--ys-text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.ys-cache-stats-card .ys-stats-refresh {
+    font-size: 12px;
+    color: var(--ys-text-muted);
+}
+
+.ys-cache-stats-card .ys-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.ys-cache-stats-card .ys-stat-item {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 6px;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid var(--ys-border);
+}
+
+.ys-cache-stats-card .ys-stat-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ys-primary-hover);
+    display: block;
+}
+
+.ys-cache-stats-card .ys-stat-label {
+    font-size: 12px;
+    color: var(--ys-text-muted);
+    margin-top: 5px;
+    display: block;
+}
+
+/* 統計表格 */
+.ys-admin-cache-settings .widefat {
+    border-color: var(--ys-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.ys-admin-cache-settings .widefat th,
+.ys-admin-cache-settings .widefat td {
+    padding: 12px 16px;
+    border-color: var(--ys-border);
+}
+
+.ys-admin-cache-settings .widefat th {
+    background: var(--ys-primary-lighter);
+    color: var(--ys-text);
+    font-weight: 600;
+}
+
+.ys-admin-cache-settings .widefat.striped tbody tr:nth-child(odd) {
+    background: var(--ys-primary-light);
+}
+
+/* 區隔線 */
+.ys-admin-cache-settings hr {
+    margin: 30px 0;
+    border: 0;
+    border-top: 1px solid var(--ys-border);
+}
+
+/* 關於區塊 */
+.ys-admin-cache-settings .ys-about-section {
+    background: var(--ys-primary-lighter);
+    border-radius: 8px;
+    padding: 20px;
+    color: var(--ys-text-muted);
+}
+
+.ys-admin-cache-settings .ys-about-section a {
+    color: var(--ys-primary-hover);
+    text-decoration: none;
+}
+
+.ys-admin-cache-settings .ys-about-section a:hover {
+    color: var(--ys-primary);
+    text-decoration: underline;
+}
+
+/* Debug 提示 */
+.ys-debug-notice {
+    background: var(--ys-primary-light);
+    border-left: 4px solid var(--ys-primary);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-top: 10px;
+}
+
+.ys-debug-notice code {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--ys-text);
+}
+
+/* 響應式調整 */
+@media screen and (max-width: 782px) {
+    .ys-pages-fieldset {
+        max-height: none;
+    }
+
+    .ys-admin-cache-label {
+        bottom: 60px;
+        right: 10px;
+    }
+
+    .ys-cache-stats-card .ys-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
