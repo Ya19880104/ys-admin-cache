@@ -464,7 +464,8 @@ class YSSettingsPage {
                         if ( $next_run ) {
                             $time_diff = $next_run - time();
                             if ( $time_diff > 0 ) {
-                                echo esc_html( human_time_diff( time(), $next_run ) );
+                                /* translators: %d: seconds */
+                                echo esc_html( sprintf( __( '%d 秒', 'ys-admin-cache' ), $time_diff ) );
                             } else {
                                 esc_html_e( '執行中', 'ys-admin-cache' );
                             }
@@ -514,12 +515,13 @@ class YSSettingsPage {
         $stats    = YSCacheStorage::get_stats();
         $next_run = \YangSheep\AdminCache\Cron\YSCronPreloader::get_next_run();
 
-        // 計算下次執行時間文字
+        // 計算下次執行時間文字（顯示秒數）
         $cron_next_run = '—';
         if ( $next_run ) {
             $time_diff = $next_run - time();
             if ( $time_diff > 0 ) {
-                $cron_next_run = human_time_diff( time(), $next_run );
+                /* translators: %d: seconds */
+                $cron_next_run = sprintf( __( '%d 秒', 'ys-admin-cache' ), $time_diff );
             } else {
                 $cron_next_run = __( '執行中', 'ys-admin-cache' );
             }
