@@ -3,7 +3,7 @@
  * Plugin Name: YS Admin Cache
  * Plugin URI: https://yangsheep.com.tw/plugins/ys-admin-cache
  * Description: WordPress 後台頁面快取，提升管理效率
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: YANGSHEEP DESIGN
  * Author URI: https://yangsheep.com.tw
  * Text Domain: ys-admin-cache
@@ -19,7 +19,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // 常數定義
-define( 'YS_ADMIN_CACHE_VERSION', '1.0.0' );
+define( 'YS_ADMIN_CACHE_VERSION', '1.0.1' );
 define( 'YS_ADMIN_CACHE_PLUGIN_FILE', __FILE__ );
 define( 'YS_ADMIN_CACHE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'YS_ADMIN_CACHE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
