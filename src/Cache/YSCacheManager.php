@@ -101,14 +101,19 @@ class YSCacheManager {
     /**
      * 處理預載入請求
      *
-     * @return never
+     * @return void
      */
-    private static function handle_prefetch_request(): never {
-        $cache_key = YSCacheKey::generate();
-        $cached    = YSCacheStorage::get( $cache_key );
+    private static function handle_prefetch_request(): void {
+        $current_page = YSCacheKey::get_current_page();
+        $cache_key    = YSCacheKey::generate();
+        $cached       = YSCacheStorage::get( $cache_key );
 
         // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $is_refresh = isset( $_POST['ys_admin_cache_refresh'] ) && '1' === $_POST['ys_admin_cache_refresh'];
+
+        \YangSheep\AdminCache\YSAdminCache::log(
+            sprintf( 'Prefetch request for page: %s, refresh: %s', $current_page, $is_refresh ? 'yes' : 'no' )
+        );
 
         if ( false !== $cached && ! $is_refresh ) {
             // 快取存在，回傳剩餘時間
@@ -116,12 +121,18 @@ class YSCacheManager {
             $remaining = ( self::$settings['duration'] ?? 300 ) - ( time() - $generated );
             $remaining = max( 0, $remaining );
 
+            \YangSheep\AdminCache\YSAdminCache::log(
+                sprintf( 'Prefetch: cache exists, remaining: %d seconds', $remaining )
+            );
+
             echo 'prefetched:' . esc_html( $remaining );
             exit;
         }
 
+        \YangSheep\AdminCache\YSAdminCache::log( 'Prefetch: starting output buffer for new cache' );
+
         // 無快取，開始緩衝
-        ob_start( function ( $content ) use ( $cache_key ) {
+        ob_start( function ( $content ) use ( $cache_key, $current_page ) {
             if ( strpos( $content, '</html>' ) === false ) {
                 return $content;
             }
@@ -131,15 +142,19 @@ class YSCacheManager {
                 'content'      => $content,
                 'generated_at' => current_time( 'mysql' ),
                 'user_id'      => get_current_user_id(),
-                'page'         => YSCacheKey::get_current_page(),
+                'page'         => $current_page,
             ];
 
-            YSCacheStorage::set( $cache_key, $data, self::$settings['duration'] ?? 300 );
+            $saved = YSCacheStorage::set( $cache_key, $data, self::$settings['duration'] ?? 300 );
+
+            \YangSheep\AdminCache\YSAdminCache::log(
+                sprintf( 'Prefetch: cache %s for page: %s', $saved ? 'saved' : 'failed', $current_page )
+            );
 
             return 'prefetching:' . ( self::$settings['duration'] ?? 300 );
         } );
 
-        // 讓 WordPress 繼續處理
+        // 讓 WordPress 繼續處理並輸出頁面
     }
 
     /**
@@ -201,17 +216,33 @@ class YSCacheManager {
 
         // 檢查是否為排除頁面（外掛自己的設定頁面）
         if ( in_array( $current_page, self::EXCLUDED_PAGES, true ) ) {
+            \YangSheep\AdminCache\YSAdminCache::log(
+                sprintf( 'Page excluded: %s', $current_page )
+            );
             return false;
         }
 
         // 檢查是否在快取頁面清單中（直接比對）
         $cached_pages = self::$settings['cached_pages'] ?? [];
         if ( empty( $cached_pages ) ) {
+            \YangSheep\AdminCache\YSAdminCache::log( 'No cached pages configured' );
             return false;
         }
 
         // 直接比對 - 與原始外掛相同
-        return in_array( $current_page, $cached_pages, true );
+        $is_cacheable = in_array( $current_page, $cached_pages, true );
+
+        if ( ! $is_cacheable && ( self::$settings['debug_mode'] ?? false ) ) {
+            \YangSheep\AdminCache\YSAdminCache::log(
+                sprintf(
+                    'Page not in cache list. Current: "%s", List: [%s]',
+                    $current_page,
+                    implode( ', ', $cached_pages )
+                )
+            );
+        }
+
+        return $is_cacheable;
     }
 
     /**

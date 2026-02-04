@@ -264,11 +264,13 @@
 
             this.queue = urls;
 
-            // 優先處理控制台
-            const dashboardIndex = urls.indexOf('index.php');
+            // 優先處理控制台（檢查完整 URL 中是否包含 index.php）
+            const dashboardIndex = urls.findIndex(function(url) {
+                return url.indexOf('/index.php') !== -1 || url.endsWith('/wp-admin/');
+            });
             if (dashboardIndex > 0) {
-                this.queue.splice(dashboardIndex, 1);
-                this.queue.unshift('index.php');
+                const dashboardUrl = this.queue.splice(dashboardIndex, 1)[0];
+                this.queue.unshift(dashboardUrl);
             }
 
             // 延遲開始預載入（避免影響頁面載入）
