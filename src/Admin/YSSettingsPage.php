@@ -361,6 +361,11 @@ class YSSettingsPage {
                 <?php self::render_cache_stats(); ?>
             </div>
 
+            <hr>
+
+            <h2><?php esc_html_e( '自動預載入狀態', 'ys-admin-cache' ); ?></h2>
+            <?php self::render_cron_status(); ?>
+
             <?php if ( $debug_enabled ) : ?>
             <hr>
 
@@ -426,6 +431,66 @@ class YSSettingsPage {
                     <span class="ys-stat-label"><?php esc_html_e( '儲存目錄', 'ys-admin-cache' ); ?></span>
                 </div>
             </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * 渲染 Cron 狀態
+     *
+     * @return void
+     */
+    public static function render_cron_status(): void {
+        $preload_enabled = get_option( 'ys_admin_cache_preload', 'yes' ) === 'yes';
+        $cache_enabled   = get_option( 'ys_admin_cache_enabled', 'yes' ) === 'yes';
+        $next_run        = \YangSheep\AdminCache\Cron\YSCronPreloader::get_next_run();
+        $duration        = absint( get_option( 'ys_admin_cache_duration', 300 ) );
+        ?>
+        <div class="ys-cache-stats-card">
+            <div class="ys-stats-grid">
+                <div class="ys-stat-item">
+                    <span class="ys-stat-value">
+                        <?php if ( $preload_enabled && $cache_enabled ) : ?>
+                            <span style="color: var(--ys-success, #5a9a6b);">✓</span>
+                        <?php else : ?>
+                            <span style="color: var(--ys-error, #b85c5c);">✗</span>
+                        <?php endif; ?>
+                    </span>
+                    <span class="ys-stat-label"><?php esc_html_e( '預載入狀態', 'ys-admin-cache' ); ?></span>
+                </div>
+                <div class="ys-stat-item">
+                    <span class="ys-stat-value">
+                        <?php
+                        if ( $next_run ) {
+                            $time_diff = $next_run - time();
+                            if ( $time_diff > 0 ) {
+                                echo esc_html( human_time_diff( time(), $next_run ) );
+                            } else {
+                                esc_html_e( '執行中', 'ys-admin-cache' );
+                            }
+                        } else {
+                            echo '—';
+                        }
+                        ?>
+                    </span>
+                    <span class="ys-stat-label"><?php esc_html_e( '下次執行', 'ys-admin-cache' ); ?></span>
+                </div>
+                <div class="ys-stat-item">
+                    <span class="ys-stat-value">
+                        <?php echo esc_html( human_time_diff( 0, $duration ) ); ?>
+                    </span>
+                    <span class="ys-stat-label"><?php esc_html_e( '更新間隔', 'ys-admin-cache' ); ?></span>
+                </div>
+            </div>
+            <?php if ( ! $preload_enabled || ! $cache_enabled ) : ?>
+            <p class="description" style="margin-top: 15px; text-align: center;">
+                <?php esc_html_e( '請啟用「自動預載入」選項以使用 Cron 自動更新快取', 'ys-admin-cache' ); ?>
+            </p>
+            <?php else : ?>
+            <p class="description" style="margin-top: 15px; text-align: center;">
+                <?php esc_html_e( 'Cron 會自動在快取過期前更新，無需手動操作', 'ys-admin-cache' ); ?>
+            </p>
+            <?php endif; ?>
         </div>
         <?php
     }

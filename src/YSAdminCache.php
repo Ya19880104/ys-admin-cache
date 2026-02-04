@@ -89,9 +89,84 @@ final class YSAdminCache {
             Hooks\YSCacheInvalidator::init();
         }
 
-        // Ajax 處理
+        // Cron 預載入（始終初始化以處理請求）
+        Cron\YSCronPreloader::init();
+
+        // 如果啟用預載入，確保 Cron 已排程
+        if ( $this->settings['enabled'] && $this->settings['preload_enabled'] ) {
+            $this->maybe_schedule_cron();
+        }
+
+        // Ajax 處理（保留 JS 預載入作為備用）
         Ajax\YSPreloadHandler::init();
         Ajax\YSClearCacheHandler::init();
+
+        // 設定變更時重新安排 Cron
+        add_action( 'update_option_ys_admin_cache_preload', [ $this, 'on_preload_setting_changed' ], 10, 2 );
+        add_action( 'update_option_ys_admin_cache_duration', [ $this, 'on_duration_setting_changed' ], 10, 2 );
+        add_action( 'update_option_ys_admin_cache_enabled', [ $this, 'on_enabled_setting_changed' ], 10, 2 );
+    }
+
+    /**
+     * 如果尚未排程，安排 Cron
+     *
+     * @return void
+     */
+    private function maybe_schedule_cron(): void {
+        if ( ! Cron\YSCronPreloader::get_next_run() ) {
+            Cron\YSCronPreloader::schedule( $this->settings['duration'] );
+        }
+    }
+
+    /**
+     * 預載入設定變更時
+     *
+     * @param mixed $old_value 舊值.
+     * @param mixed $new_value 新值.
+     * @return void
+     */
+    public function on_preload_setting_changed( $old_value, $new_value ): void {
+        if ( 'yes' === $new_value && get_option( 'ys_admin_cache_enabled', 'yes' ) === 'yes' ) {
+            // 啟用預載入
+            $duration = absint( get_option( 'ys_admin_cache_duration', 300 ) );
+            Cron\YSCronPreloader::schedule( $duration );
+        } else {
+            // 停用預載入
+            Cron\YSCronPreloader::unschedule();
+        }
+    }
+
+    /**
+     * 快取時間設定變更時
+     *
+     * @param mixed $old_value 舊值.
+     * @param mixed $new_value 新值.
+     * @return void
+     */
+    public function on_duration_setting_changed( $old_value, $new_value ): void {
+        if ( get_option( 'ys_admin_cache_preload', 'yes' ) === 'yes' &&
+             get_option( 'ys_admin_cache_enabled', 'yes' ) === 'yes' ) {
+            // 重新安排 Cron
+            Cron\YSCronPreloader::schedule( absint( $new_value ) );
+        }
+    }
+
+    /**
+     * 啟用設定變更時
+     *
+     * @param mixed $old_value 舊值.
+     * @param mixed $new_value 新值.
+     * @return void
+     */
+    public function on_enabled_setting_changed( $old_value, $new_value ): void {
+        if ( 'yes' !== $new_value ) {
+            // 停用時取消 Cron
+            Cron\YSCronPreloader::unschedule();
+        } elseif ( get_option( 'ys_admin_cache_preload', 'yes' ) === 'yes' ) {
+            // 啟用時安排 Cron
+            $duration = absint( get_option( 'ys_admin_cache_duration', 300 ) );
+            Cron\YSCronPreloader::schedule( $duration );
+        }
     }
 
     /**
@@ -118,6 +193,9 @@ final class YSAdminCache {
      * @return void
      */
     public static function deactivate(): void {
+        // 取消 Cron 排程
+        Cron\YSCronPreloader::unschedule();
+
         // 清除所有快取（保留設定）
         Cache\YSCacheStorage::flush_all();
     }
