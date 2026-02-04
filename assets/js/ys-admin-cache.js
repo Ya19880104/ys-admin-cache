@@ -117,6 +117,11 @@
                         self.animateValue('#ys-stat-count', response.data.count);
                         self.animateValue('#ys-stat-size', response.data.size);
                         $('#ys-stat-path').text(response.data.path);
+
+                        // 更新 Cron 狀態
+                        if (response.data.cron_next_run !== undefined) {
+                            self.animateValue('#ys-cron-next-run', response.data.cron_next_run);
+                        }
                     }
                 }
             });

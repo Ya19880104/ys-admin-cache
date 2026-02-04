@@ -459,7 +459,7 @@ class YSSettingsPage {
                     <span class="ys-stat-label"><?php esc_html_e( '預載入狀態', 'ys-admin-cache' ); ?></span>
                 </div>
                 <div class="ys-stat-item">
-                    <span class="ys-stat-value">
+                    <span class="ys-stat-value" id="ys-cron-next-run">
                         <?php
                         if ( $next_run ) {
                             $time_diff = $next_run - time();
@@ -511,12 +511,25 @@ class YSSettingsPage {
             wp_send_json_error( [ 'message' => 'Unauthorized' ], 403 );
         }
 
-        $stats = YSCacheStorage::get_stats();
+        $stats    = YSCacheStorage::get_stats();
+        $next_run = \YangSheep\AdminCache\Cron\YSCronPreloader::get_next_run();
+
+        // 計算下次執行時間文字
+        $cron_next_run = '—';
+        if ( $next_run ) {
+            $time_diff = $next_run - time();
+            if ( $time_diff > 0 ) {
+                $cron_next_run = human_time_diff( time(), $next_run );
+            } else {
+                $cron_next_run = __( '執行中', 'ys-admin-cache' );
+            }
+        }
 
         wp_send_json_success( [
-            'count' => number_format_i18n( $stats['count'] ),
-            'size'  => size_format( $stats['size'] ),
-            'path'  => basename( $stats['path'] ),
+            'count'         => number_format_i18n( $stats['count'] ),
+            'size'          => size_format( $stats['size'] ),
+            'path'          => basename( $stats['path'] ),
+            'cron_next_run' => $cron_next_run,
         ] );
     }
 
