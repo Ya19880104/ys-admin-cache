@@ -443,8 +443,16 @@ class YSSettingsPage {
     public static function render_cron_status(): void {
         $preload_enabled = get_option( 'ys_admin_cache_preload', 'yes' ) === 'yes';
         $cache_enabled   = get_option( 'ys_admin_cache_enabled', 'yes' ) === 'yes';
-        $next_run        = \YangSheep\AdminCache\Cron\YSCronPreloader::get_next_run();
         $duration        = absint( get_option( 'ys_admin_cache_duration', 300 ) );
+
+        // 檢查並重新排程過期的 Cron
+        $next_run = \YangSheep\AdminCache\Cron\YSCronPreloader::get_next_run();
+        if ( $preload_enabled && $cache_enabled ) {
+            if ( ! $next_run || ( $next_run - time() ) < -60 ) {
+                \YangSheep\AdminCache\Cron\YSCronPreloader::schedule( $duration );
+                $next_run = \YangSheep\AdminCache\Cron\YSCronPreloader::get_next_run();
+            }
+        }
         ?>
         <div class="ys-cache-stats-card">
             <div class="ys-stats-grid">
@@ -512,8 +520,19 @@ class YSSettingsPage {
             wp_send_json_error( [ 'message' => 'Unauthorized' ], 403 );
         }
 
-        $stats    = YSCacheStorage::get_stats();
+        $stats           = YSCacheStorage::get_stats();
+        $preload_enabled = get_option( 'ys_admin_cache_preload', 'yes' ) === 'yes';
+        $cache_enabled   = get_option( 'ys_admin_cache_enabled', 'yes' ) === 'yes';
+        $duration        = absint( get_option( 'ys_admin_cache_duration', 300 ) );
+
+        // 檢查並重新排程過期的 Cron
         $next_run = \YangSheep\AdminCache\Cron\YSCronPreloader::get_next_run();
+        if ( $preload_enabled && $cache_enabled ) {
+            if ( ! $next_run || ( $next_run - time() ) < -60 ) {
+                \YangSheep\AdminCache\Cron\YSCronPreloader::schedule( $duration );
+                $next_run = \YangSheep\AdminCache\Cron\YSCronPreloader::get_next_run();
+            }
+        }
 
         // 計算下次執行時間文字（顯示秒數）
         $cron_next_run = '—';

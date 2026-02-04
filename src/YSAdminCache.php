@@ -108,12 +108,15 @@ final class YSAdminCache {
     }
 
     /**
-     * 如果尚未排程，安排 Cron
+     * 如果尚未排程或已過期，安排 Cron
      *
      * @return void
      */
     private function maybe_schedule_cron(): void {
-        if ( ! Cron\YSCronPreloader::get_next_run() ) {
+        $next_run = Cron\YSCronPreloader::get_next_run();
+
+        // 未排程或已過期超過 60 秒，重新排程
+        if ( ! $next_run || ( $next_run - time() ) < -60 ) {
             Cron\YSCronPreloader::schedule( $this->settings['duration'] );
         }
     }
