@@ -176,6 +176,8 @@ class YSCacheManager {
     /**
      * 檢查請求是否可快取
      *
+     * 簡化版本 - 使用與原始外掛相同的 in_array 直接比對
+     *
      * @return bool
      */
     public static function is_cacheable_request(): bool {
@@ -194,97 +196,22 @@ class YSCacheManager {
             return false;
         }
 
-        // 取得當前頁面
-        $current_page     = YSCacheKey::get_current_page();
-        $current_page_raw = YSCacheKey::get_current_page_raw();
+        // 取得當前頁面（使用與原始外掛相同的方式）
+        $current_page = YSCacheKey::get_current_page();
 
         // 檢查是否為排除頁面（外掛自己的設定頁面）
-        foreach ( self::EXCLUDED_PAGES as $excluded ) {
-            if ( self::match_page( $current_page, $excluded ) ) {
-                return false;
-            }
-            if ( $current_page_raw === $excluded ) {
-                return false;
-            }
+        if ( in_array( $current_page, self::EXCLUDED_PAGES, true ) ) {
+            return false;
         }
 
-        // 檢查是否在快取頁面清單中
+        // 檢查是否在快取頁面清單中（直接比對）
         $cached_pages = self::$settings['cached_pages'] ?? [];
         if ( empty( $cached_pages ) ) {
             return false;
         }
 
-        // 檢查頁面是否在清單中
-        foreach ( $cached_pages as $page ) {
-            if ( self::match_page( $current_page, $page ) ) {
-                return true;
-            }
-            if ( $current_page_raw === $page ) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * 比對頁面
-     *
-     * @param string $current 當前頁面.
-     * @param string $pattern 比對模式.
-     * @return bool
-     */
-    private static function match_page( string $current, string $pattern ): bool {
-        // 完全比對
-        if ( $current === $pattern ) {
-            return true;
-        }
-
-        // URL 解碼後比對
-        $current_decoded = urldecode( $current );
-        $pattern_decoded = urldecode( $pattern );
-
-        if ( $current_decoded === $pattern_decoded ) {
-            return true;
-        }
-
-        // 基礎頁面比對（只比對 .php 部分）
-        $current_base = strtok( $current, '?' );
-        $pattern_base = strtok( $pattern, '?' );
-
-        // 如果 pattern 包含 post_type 參數，需要完全比對
-        if ( str_contains( $pattern, 'post_type=' ) ) {
-            // 提取 post_type 值
-            $pattern_pt = '';
-            if ( preg_match( '/post_type=([^&]+)/', $pattern, $matches ) ) {
-                $pattern_pt = $matches[1];
-            }
-
-            $current_pt = '';
-            if ( preg_match( '/post_type=([^&]+)/', $current, $matches ) ) {
-                $current_pt = $matches[1];
-            }
-
-            return $current_base === $pattern_base && $current_pt === $pattern_pt;
-        }
-
-        // 如果 pattern 包含 page 參數（設定頁面），需要完全比對
-        if ( str_contains( $pattern, 'page=' ) ) {
-            $pattern_page = '';
-            if ( preg_match( '/page=([^&]+)/', $pattern, $matches ) ) {
-                $pattern_page = $matches[1];
-            }
-
-            $current_page_param = '';
-            if ( preg_match( '/page=([^&]+)/', $current, $matches ) ) {
-                $current_page_param = $matches[1];
-            }
-
-            return $current_base === $pattern_base && $current_page_param === $pattern_page;
-        }
-
-        // 簡單頁面只需要基礎比對（且當前頁面沒有 post_type）
-        return $current_base === $pattern_base && ! str_contains( $current, 'post_type=' );
+        // 直接比對 - 與原始外掛相同
+        return in_array( $current_page, $cached_pages, true );
     }
 
     /**
