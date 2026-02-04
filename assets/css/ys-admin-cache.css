@@ -24,15 +24,7 @@
 
 /* 設定頁面容器 */
 .ys-admin-cache-settings {
-    max-width: 900px;
-    margin-right: 20px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-}
-
-/* 確保表單表格寬度正常 */
-.ys-admin-cache-settings .form-table {
-    width: 100%;
-    max-width: 100%;
 }
 
 .ys-admin-cache-settings h1 {
